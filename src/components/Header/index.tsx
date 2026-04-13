@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { FiSearch, FiHelpCircle, FiUser } from 'react-icons/fi';
 import {
   HeaderContainer,
@@ -30,7 +31,9 @@ export const Header: React.FC = () => {
         <IconButton title="Ajuda">
           <FiHelpCircle />
         </IconButton>
-        <PrimaryButton>Oferecer carona</PrimaryButton>
+        <Link to="/cadastro" style={{ textDecoration: 'none' }}>
+          <PrimaryButton>Oferecer carona</PrimaryButton>
+        </Link>
         <ProfileIcon title="Perfil">
           <FiUser />
         </ProfileIcon>
