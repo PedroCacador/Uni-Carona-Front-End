@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { FiMapPin, FiCalendar, FiUsers, FiSearch } from 'react-icons/fi';
 import {
   SearchBarContainer,
@@ -44,10 +45,12 @@ export const SearchBar: React.FC = () => {
         </InputGroup>
       </SearchField>
 
-      <SearchButton type="button">
-        <FiSearch />
-        Procurar
-      </SearchButton>
+      <Link to="/caronas" style={{ textDecoration: 'none' }}>
+        <SearchButton type="button">
+          <FiSearch />
+          Procurar
+        </SearchButton>
+      </Link>
     </SearchBarContainer>
   );
 };
