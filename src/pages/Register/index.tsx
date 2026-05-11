@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { FiArrowLeft } from 'react-icons/fi';
 import { styles } from './styles';
 
 const Cadastro: React.FC = () => {
@@ -104,6 +106,11 @@ const Cadastro: React.FC = () => {
   return (
     <div style={styles.wrapper}>
       <div style={styles.card}>
+        {/* Botão voltar */}
+        <Link to="/" style={styles.backButton}>
+          <FiArrowLeft />
+        </Link>
+        
         <h1 style={styles.logo}>UniCarona</h1>
         <p style={styles.subtitle}>Crie sua conta e comece a compartilhar caronas</p>
 
@@ -247,7 +254,7 @@ const Cadastro: React.FC = () => {
           </button>
 
           <div style={styles.loginRedirect}>
-            Já tem uma conta? <a href="#" style={styles.link}>Faça login</a>
+            Já tem uma conta? <Link to="/login" style={styles.link}>Faça login</Link>
           </div>
         </form>
       </div>

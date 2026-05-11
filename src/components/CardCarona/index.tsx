@@ -122,8 +122,7 @@ const CardCarona: React.FC<CardCaronaProps> = ({ carona, onVerDetalhes }) => {
           background: vagas > 0 ? '#e8f5e9' : '#ffebee',
           color: vagas > 0 ? '#2e7d32' : '#c62828',
         }}>
-          <i className="fas fa-user-friends" style={{ marginRight: '4px' }}></i>
-          {vagas > 0 ? `${vagas} vagas` : 'Sem vagas'}
+          {vagas > 0 ? vagas : '0'}
         </div>
       </div>
 

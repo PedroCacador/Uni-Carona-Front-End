@@ -31,6 +31,9 @@ export const Header: React.FC = () => {
         <IconButton title="Ajuda">
           <FiHelpCircle />
         </IconButton>
+        <Link to="/login" style={{ textDecoration: 'none' }}>
+          <PrimaryButton>Entrar</PrimaryButton>
+        </Link>
         <Link to="/cadastro" style={{ textDecoration: 'none' }}>
           <PrimaryButton>Oferecer carona</PrimaryButton>
         </Link>

@@ -45,7 +45,8 @@ export const NavLink = styled.a`
 export const RightActions = styled.div`
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 1rem;
+  justify-content: center;
 `;
 
 export const IconButton = styled.button`

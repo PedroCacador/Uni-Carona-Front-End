@@ -1,100 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import CardCarona, { type Carona } from '../../components/CardCarona';
 import { styles } from './styles';
-
-// Dados mockados
-const mockCaronas: Carona[] = [
-  {
-    id: '1',
-    motorista: {
-      nome: 'Ana Silva',
-      universidade: 'USP - Campus São Paulo',
-      avaliacao: 4.8,
-    },
-    origem: 'Metrô Vila Mariana',
-    destino: 'USP - Cidade Universitária',
-    data: '2026-04-25',
-    horario: '08:00',
-    vagas: 3,
-    preco: 8.50,
-    observacoes: 'Carona com ar condicionado e música ambiente',
-  },
-  {
-    id: '2',
-    motorista: {
-      nome: 'Carlos Santos',
-      universidade: 'UNICAMP',
-      avaliacao: 4.5,
-    },
-    origem: 'Campinas - Centro',
-    destino: 'UNICAMP - Barão Geraldo',
-    data: '2026-04-25',
-    horario: '07:30',
-    vagas: 2,
-    preco: 6.00,
-    observacoes: 'Só aceito mochila pequena',
-  },
-  {
-    id: '3',
-    motorista: {
-      nome: 'Mariana Costa',
-      universidade: 'PUC - Rio',
-      avaliacao: 5.0,
-    },
-    origem: 'Botafogo',
-    destino: 'PUC - Gávea',
-    data: '2026-04-25',
-    horario: '09:15',
-    vagas: 0, // Sem vagas
-    preco: 7.50,
-    observacoes: 'Carona feminina',
-  },
-  {
-    id: '4',
-    motorista: {
-      nome: 'Rafael Oliveira',
-      universidade: 'UFMG',
-      avaliacao: 4.2,
-    },
-    origem: 'Savassi',
-    destino: 'UFMG - Pampulha',
-    data: '2026-04-26',
-    horario: '13:00',
-    vagas: 1,
-    preco: 5.00,
-    observacoes: 'Preciso estar na UFMG até 13:30',
-  },
-  {
-    id: '5',
-    motorista: {
-      nome: 'Fernanda Lima',
-      universidade: 'UFRJ',
-      avaliacao: 4.7,
-    },
-    origem: 'Copacabana',
-    destino: 'UFRJ - Fundão',
-    data: '2026-04-26',
-    horario: '10:30',
-    vagas: 2,
-    preco: 9.00,
-    observacoes: 'Carona com boa música e bom papo',
-  },
-  {
-    id: '6',
-    motorista: {
-      nome: 'Thiago Souza',
-      universidade: 'UnB',
-      avaliacao: 4.3,
-    },
-    origem: 'Asa Sul',
-    destino: 'UnB - Darcy Ribeiro',
-    data: '2026-04-27',
-    horario: '07:45',
-    vagas: 3,
-    preco: 4.50,
-    observacoes: '',
-  },
-];
+import { caronaApi, type CaronaFilters } from '../../services/caronaApi';
 
 const ListagemCaronas: React.FC = () => {
   const [caronasFiltradas, setCaronasFiltradas] = useState<Carona[]>([]);
@@ -106,51 +13,58 @@ const ListagemCaronas: React.FC = () => {
   const [data, setData] = useState('');
   const [apenasComVagas, setApenasComVagas] = useState(false); // Filtro de vagas disponíveis
 
-  // Simula chamada para o endpoint GET /caronas/buscar
+  // Chamada real para o backend
   const buscarCaronas = async () => {
     setLoading(true);
     
-    // Monta a query string conforme o endpoint
-    const params = new URLSearchParams();
-    if (origem) params.append('origem', origem);
-    if (destino) params.append('destino', destino);
-    if (data) params.append('data', data);
-    
-    // Simula requisição para o backend
-    // const response = await fetch(`http://localhost:3000/caronas/buscar?${params.toString()}`);
-    // const data = await response.json();
-    
-    // Simulação com dados mockados
-    setTimeout(() => {
-      let resultados = [...mockCaronas];
+    try {
+      const filters: CaronaFilters = {};
       
-      // Filtro por origem
-      if (origem) {
-        resultados = resultados.filter(carona =>
-          carona.origem.toLowerCase().includes(origem.toLowerCase())
-        );
+      if (origem) filters.origem = origem;
+      if (destino) filters.destino = destino;
+      if (apenasComVagas) {
+        filters.status = 'ATIVA';
       }
+
+      const caronasApi = await caronaApi.buscarCaronas(filters);
       
-      // Filtro por destino
-      if (destino) {
-        resultados = resultados.filter(carona =>
-          carona.destino.toLowerCase().includes(destino.toLowerCase())
-        );
-      }
+      // Converter CaronaResponse para Carona (interface do componente)
+      const caronasConvertidas: Carona[] = caronasApi.map(caronaApi => ({
+        id: caronaApi.id,
+        motorista: {
+          nome: caronaApi.motorista.nome,
+          universidade: caronaApi.motorista.universidade,
+          avaliacao: caronaApi.motorista.avaliacao,
+        },
+        origem: caronaApi.origem,
+        destino: caronaApi.destino,
+        data: caronaApi.data,
+        horario: caronaApi.horario,
+        vagas: caronaApi.vagas,
+        preco: caronaApi.preco,
+        observacoes: caronaApi.observacoes,
+        status: caronaApi.status.toLowerCase() as 'ativa' | 'completa' | 'cancelada',
+      }));
       
-      // Filtro por data
+      // Aplicar filtro de data localmente se necessário
+      let resultados = caronasConvertidas;
       if (data) {
         resultados = resultados.filter(carona => carona.data === data);
       }
       
-      // Filtro por vagas disponíveis (somente caronas com vagas > 0)
+      // Filtro adicional de vagas (backend não tem esse filtro específico)
       if (apenasComVagas) {
         resultados = resultados.filter(carona => carona.vagas > 0);
       }
       
       setCaronasFiltradas(resultados);
+    } catch (error: any) {
+      console.error('Erro ao buscar caronas:', error);
+      // Em caso de erro, exibe mensagem de erro e array vazio
+      setCaronasFiltradas([]);
+    } finally {
       setLoading(false);
-    }, 500);
+    }
   };
 
   // Busca caronas quando os filtros mudarem
