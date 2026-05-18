@@ -3,10 +3,15 @@ import { Home } from '../pages/Home';
 import Cadastro from '../pages/Register';
 import Login from '../pages/Login';
 import ListagemCaronas from '../pages/Listagem-caronas';
+import Perfil from '../pages/Profile';
 
 const router = createBrowserRouter([
   {
     path: '/',
+    element: <Home />,
+  },
+  {
+    path: '/home',
     element: <Home />,
   },
   {
@@ -20,6 +25,10 @@ const router = createBrowserRouter([
   {
     path: '/caronas',
     element: <ListagemCaronas />,
+  },
+  {
+    path: '/perfil',
+    element: <Perfil />,
   },
 ]);
 

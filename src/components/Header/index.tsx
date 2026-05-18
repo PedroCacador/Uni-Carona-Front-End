@@ -37,9 +37,11 @@ export const Header: React.FC = () => {
         <Link to="/cadastro" style={{ textDecoration: 'none' }}>
           <PrimaryButton>Oferecer carona</PrimaryButton>
         </Link>
-        <ProfileIcon title="Perfil">
-          <FiUser />
-        </ProfileIcon>
+        <Link to="/perfil" style={{ textDecoration: 'none' }}>
+          <ProfileIcon title="Perfil">
+            <FiUser />
+          </ProfileIcon>
+        </Link>
       </RightActions>
     </HeaderContainer>
   );
