@@ -1,20 +1,22 @@
 import React from 'react';
-import { Header } from '../../components/Header';
+import { HeroSection } from '../../components/HeroSection';
 import { SearchBar } from '../../components/SearchBar';
 import { HowItWorks } from '../../components/HowItWorks';
+import { Testimonials } from '../../components/Testimonials';
+import { CTABanner } from '../../components/CTABanner';
 import { Footer } from '../../components/Footer';
-import { HomeContainer, ContentArea } from './styles';
 
 export const Home: React.FC = () => {
   return (
-    <HomeContainer>
-      <Header />
-      <ContentArea>
+    <>
+      <div className="w-full flex flex-col items-center">
+        <HeroSection />
         <SearchBar />
         <HowItWorks />
-      </ContentArea>
+        <Testimonials />
+        <CTABanner />
+      </div>
       <Footer />
-    </HomeContainer>
+    </>
   );
 };
-
