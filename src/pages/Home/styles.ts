@@ -9,10 +9,11 @@ export const HomeContainer = styled.main`
 
 export const ContentArea = styled.section`
   flex: 1;
-  padding: 32px;
+  padding: 120px 24px 64px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 48px;
 `;
 
 export const WelcomeTitle = styled.h2`

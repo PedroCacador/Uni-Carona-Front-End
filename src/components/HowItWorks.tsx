@@ -1,133 +1,122 @@
 import React from 'react';
-import styled, { keyframes } from 'styled-components';
+import { FiSearch, FiCheckCircle, FiNavigation } from 'react-icons/fi';
 import step1Img from '../assets/images/image1.jpg';
 import step2Img from '../assets/images/image2.png';
 import step3Img from '../assets/images/image3.png';
 
-const fadeInUp = keyframes`
-  from {
-    opacity: 0;
-    transform: translateY(50px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-`;
-
-const SectionContainer = styled.section`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 64px 32px;
-  max-width: 1200px;
-  margin: 0 auto;
-  gap: 80px;
-  width: 100%;
-`;
-
-const MainTitle = styled.h2`
-  font-size: 36px;
-  color: #1e293b;
-  text-align: center;
-  margin-bottom: 24px;
-`;
-
-const BlockContainer = styled.div<{ reverse?: boolean }>`
-  display: flex;
-  align-items: center;
-  gap: 64px;
-  flex-direction: ${({ reverse }) => (reverse ? 'row-reverse' : 'row')};
-  width: 100%;
-  animation: ${fadeInUp} 1s both;
-  animation-timeline: view();
-  animation-range: entry 10% cover 40%;
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-    text-align: center;
-    gap: 32px;
-  }
-`;
-
-const ImageWrapper = styled.div`
-  flex: 1;
-  display: flex;
-  justify-content: center;
-
-  img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 24px;
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-    object-fit: cover;
-  }
-`;
-
-const TextWrapper = styled.div`
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  
-  @media (max-width: 768px) {
-    align-items: center;
-  }
-`;
-
-const StepTitle = styled.h3`
-  font-size: 28px;
-  color: #2563eb;
-  margin: 0;
-`;
-
-const StepDescription = styled.p`
-  font-size: 18px;
-  color: #475569;
-  line-height: 1.6;
-  margin: 0;
-`;
+const steps = [
+  {
+    number: '01',
+    icon: FiSearch,
+    title: 'Encontre uma carona',
+    description:
+      'Descubra motoristas da sua universidade indo para o mesmo destino. Filtre por data, horário e preço com nossa busca inteligente.',
+    image: step1Img,
+    imageAlt: 'Encontre uma carona',
+    accent: '#0A44B1',
+  },
+  {
+    number: '02',
+    icon: FiCheckCircle,
+    title: 'Reserve sua vaga',
+    description:
+      'Escolha o melhor horário, confirme sua participação e garanta seu lugar com poucos cliques. Rápido e sem complicação.',
+    image: step2Img,
+    imageAlt: 'Reserve sua vaga',
+    accent: '#0A44B1',
+  },
+  {
+    number: '03',
+    icon: FiNavigation,
+    title: 'Vá com segurança',
+    description:
+      'Viaje com pessoas verificadas da sua instituição. Perfis confirmados, avaliações reais e total transparência na jornada.',
+    image: step3Img,
+    imageAlt: 'Vá com segurança',
+    accent: '#0A44B1',
+  },
+];
 
 export const HowItWorks: React.FC = () => {
   return (
-    <SectionContainer>
-      <MainTitle>Como funciona o UniCarona</MainTitle>
+    <section className="w-full px-4 py-20" id="como-funciona">
+      <div className="max-w-[1100px] mx-auto">
 
-      <BlockContainer>
-        <ImageWrapper>
-          <img src={step1Img} alt="Encontre uma carona" />
-        </ImageWrapper>
-        <TextWrapper>
-          <StepTitle>Encontre uma carona</StepTitle>
-          <StepDescription>
-            Descubra motoristas da sua universidade indo para o mesmo destino que você, de forma rápida e prática.
-          </StepDescription>
-        </TextWrapper>
-      </BlockContainer>
+        {/* Section header */}
+        <div className="text-center mb-20">
+          <span className="inline-flex items-center gap-2 bg-[#E8EE3B]/25 border border-[#E8EE3B]/60 text-[#6b5e00] text-[12px] font-bold px-4 py-1.5 rounded-full uppercase tracking-widest mb-5">
+            Como funciona
+          </span>
+          <h2 className="text-[2.2rem] md:text-[2.8rem] font-extrabold text-slate-900 leading-tight">
+            Simples assim, em{' '}
+            <span className="text-[#0A44B1]">3 passos</span>
+          </h2>
+        </div>
 
-      <BlockContainer reverse>
-        <ImageWrapper>
-          <img src={step2Img} alt="Reserve sua vaga" />
-        </ImageWrapper>
-        <TextWrapper>
-          <StepTitle>Reserve sua vaga</StepTitle>
-          <StepDescription>
-            Escolha o melhor horário, confirme sua participação e garanta seu lugar com poucos cliques.
-          </StepDescription>
-        </TextWrapper>
-      </BlockContainer>
+        {/* Steps */}
+        <div className="flex flex-col gap-24">
+          {steps.map((step, i) => {
+            const isReverse = i % 2 !== 0;
+            return (
+              <div
+                key={step.number}
+                className={`flex flex-col ${isReverse ? 'md:flex-row-reverse' : 'md:flex-row'} items-center gap-12 md:gap-16`}
+                style={{
+                  animationTimeline: 'view()',
+                  animationRange: 'entry 10% cover 40%',
+                } as React.CSSProperties}
+              >
+                {/* Image side */}
+                <div className="flex-1 w-full group">
+                  <div className="relative rounded-[32px] overflow-hidden shadow-[0_20px_60px_rgba(10,68,177,0.10)] border border-neutral-200/50 transition-transform duration-500 group-hover:-translate-y-2">
+                    {/* Number overlay */}
+                    <div className="absolute top-5 left-5 z-10 w-12 h-12 rounded-2xl bg-[#0A44B1] flex items-center justify-center shadow-[0_4px_16px_rgba(10,68,177,0.35)]">
+                      <span className="text-white text-[15px] font-extrabold">{step.number}</span>
+                    </div>
+                    <img
+                      src={step.image}
+                      alt={step.imageAlt}
+                      className="w-full h-[280px] md:h-[340px] object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+                    />
+                    {/* subtle overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0A44B1]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  </div>
+                </div>
 
-      <BlockContainer>
-        <ImageWrapper>
-          <img src={step3Img} alt="Vá com segurança" />
-        </ImageWrapper>
-        <TextWrapper>
-          <StepTitle>Vá com segurança</StepTitle>
-          <StepDescription>
-            Viaje com pessoas verificadas da sua instituição e tenha uma experiência mais segura e confiável.
-          </StepDescription>
-        </TextWrapper>
-      </BlockContainer>
-    </SectionContainer>
+                {/* Text side */}
+                <div className={`flex-1 flex flex-col gap-5 text-center md:text-left ${isReverse ? 'md:items-end md:text-right' : 'md:items-start'}`}>
+                  {/* Icon badge */}
+                  <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-[#0A44B1]/8 border border-[#0A44B1]/12 mx-auto md:mx-0 transition-colors duration-300 hover:bg-[#0A44B1]/15">
+                    <step.icon className="text-[#0A44B1] text-[24px]" aria-hidden="true" />
+                  </div>
+
+                  {/* Step number pill */}
+                  <span className="inline-flex items-center gap-1.5 text-[12px] font-bold text-[#0A44B1] uppercase tracking-widest">
+                    <span className="w-5 h-[2px] bg-[#E8EE3B] rounded-full inline-block" />
+                    Passo {i + 1}
+                  </span>
+
+                  <h3 className="text-[1.8rem] md:text-[2.1rem] font-extrabold text-slate-900 leading-tight">
+                    {step.title}
+                  </h3>
+
+                  <p className="text-slate-500 text-[1.05rem] leading-relaxed max-w-[420px]">
+                    {step.description}
+                  </p>
+
+                  {/* Connector line (visible only on desktop) */}
+                  {i < steps.length - 1 && (
+                    <div className="hidden md:flex items-center gap-2 mt-2">
+                      <div className="w-10 h-[2px] bg-[#E8EE3B] rounded-full" />
+                      <div className="w-2 h-2 rounded-full bg-[#0A44B1]" />
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
   );
 };
