@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { authApi } from '../../services/authApi';
 import { FiMail, FiLock, FiEye, FiEyeOff, FiArrowLeft, FiMapPin, FiUsers, FiShield } from 'react-icons/fi';
 
@@ -13,7 +13,6 @@ const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [mostrarSenha, setMostrarSenha] = useState(false);
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState('');
   const [focusedField, setFocusedField] = useState<string | null>(null);
@@ -131,7 +130,7 @@ const Login: React.FC = () => {
             <div className="flex flex-col gap-1.5">
               <div className="flex items-center justify-between">
                 <label htmlFor="login-senha" className="text-[13px] font-semibold text-slate-700 uppercase tracking-wide">Senha</label>
-                <a href="#" className="text-[13px] text-[#0A44B1] hover:underline font-medium">Esqueceu a senha?</a>
+                <Link to="/recuperar-senha" className="text-[13px] text-[#0A44B1] hover:underline font-medium no-underline">Esqueceu a senha?</Link>
               </div>
               <div className={fieldClass('senha')}>
                 <FiLock className={iconClass('senha')} />

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { authApi } from '../../services/authApi';
 import { FiUser, FiMail, FiLock, FiEye, FiEyeOff, FiArrowLeft, FiBook, FiHash } from 'react-icons/fi';
 
@@ -19,7 +19,6 @@ const Cadastro: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [focusedField, setFocusedField] = useState<string | null>(null);
-  const navigate = useNavigate();
 
   const validateForm = () => {
     const e: Record<string, string> = {};

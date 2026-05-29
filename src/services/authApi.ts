@@ -27,6 +27,20 @@ export interface AuthResponse {
   };
 }
 
+export interface RecuperarSenhaData {
+  email: string;
+}
+
+export interface RedefinirSenhaData {
+  token: string;
+  senha: string;
+}
+
+export interface ValidarCodigoData {
+  email?: string;
+  codigo: string;
+}
+
 class AuthApi {
   private baseUrl: string;
 
@@ -62,6 +76,51 @@ class AuthApi {
     }
 
     return response.json();
+  }
+
+  async recuperarSenha(data: RecuperarSenhaData): Promise<{ message: string }> {
+    const response = await fetch(`${this.baseUrl}/auth/esqueci-senha`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: data.email }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || 'Erro ao enviar código de recuperação');
+    }
+
+    return response.json().catch(() => ({ message: 'Código enviado' }));
+  }
+
+  async validarCodigo(data: ValidarCodigoData): Promise<{ valid: boolean }> {
+    const response = await fetch(`${this.baseUrl}/auth/validar-codigo`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: data.email, codigo: data.codigo }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || 'Código inválido ou expirado');
+    }
+
+    return response.json().catch(() => ({ valid: true }));
+  }
+
+  async redefinirSenha(data: RedefinirSenhaData): Promise<{ message: string }> {
+    const response = await fetch(`${this.baseUrl}/auth/redefinir-senha`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token: data.token, novaSenha: data.senha }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || 'Erro ao redefinir senha');
+    }
+
+    return response.json().catch(() => ({ message: 'Senha redefinida' }));
   }
 
   async updateUser(id: string, data: Partial<RegisterData>): Promise<any> {

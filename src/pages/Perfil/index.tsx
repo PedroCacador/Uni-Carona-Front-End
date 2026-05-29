@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { FiUser, FiMail, FiBook, FiStar, FiMapPin, FiCalendar, FiCheckCircle, FiXCircle, FiClock, FiX, FiEdit3, FiLock, FiAlertCircle } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 import { reservaApi, type Reserva } from '../../services/reservaApi';
-import { caronaApi } from '../../services/caronaApi';
 import { authApi } from '../../services/authApi';
 
 const Perfil: React.FC = () => {

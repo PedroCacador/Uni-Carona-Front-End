@@ -2,6 +2,9 @@ import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom';
 import { Home } from '../pages/Home';
 import Cadastro from '../pages/Register';
 import Login from '../pages/Login';
+import RecuperarSenha from '../pages/RecuperarSenha';
+import VerificarCodigo from '../pages/VerificarCodigo';
+import NovaSenha from '../pages/NovaSenha';
 import ListagemCaronas from '../pages/Listagem-caronas';
 
 import Perfil from '../pages/Perfil';
@@ -71,6 +74,22 @@ const router = createBrowserRouter([
       {
         path: '/cadastro',
         element: <Cadastro />,
+      },
+      {
+        path: '/recuperar-senha',
+        element: <RecuperarSenha />,
+      },
+      {
+        path: '/verificar-codigo',
+        element: <VerificarCodigo />,
+      },
+      {
+        path: '/nova-senha',
+        element: <NovaSenha />,
+      },
+      {
+        path: '/resetar-senha',
+        element: <NovaSenha />,
       },
     ],
 
