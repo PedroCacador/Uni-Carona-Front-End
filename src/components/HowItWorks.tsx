@@ -42,7 +42,7 @@ export const HowItWorks: React.FC = () => {
     <section className="w-full px-4 py-20" id="como-funciona">
       <div className="max-w-[1100px] mx-auto">
 
-        {/* Section header */}
+        {}
         <div className="text-center mb-20">
           <span className="inline-flex items-center gap-2 bg-[#E8EE3B]/25 border border-[#E8EE3B]/60 text-[#6b5e00] text-[12px] font-bold px-4 py-1.5 rounded-full uppercase tracking-widest mb-5">
             Como funciona
@@ -53,7 +53,7 @@ export const HowItWorks: React.FC = () => {
           </h2>
         </div>
 
-        {/* Steps */}
+        {}
         <div className="flex flex-col gap-24">
           {steps.map((step, i) => {
             const isReverse = i % 2 !== 0;
@@ -66,10 +66,10 @@ export const HowItWorks: React.FC = () => {
                   animationRange: 'entry 10% cover 40%',
                 } as React.CSSProperties}
               >
-                {/* Image side */}
+                {}
                 <div className="flex-1 w-full group">
                   <div className="relative rounded-[32px] overflow-hidden shadow-[0_20px_60px_rgba(10,68,177,0.10)] border border-neutral-200/50 transition-transform duration-500 group-hover:-translate-y-2">
-                    {/* Number overlay */}
+                    {}
                     <div className="absolute top-5 left-5 z-10 w-12 h-12 rounded-2xl bg-[#0A44B1] flex items-center justify-center shadow-[0_4px_16px_rgba(10,68,177,0.35)]">
                       <span className="text-white text-[15px] font-extrabold">{step.number}</span>
                     </div>
@@ -78,19 +78,19 @@ export const HowItWorks: React.FC = () => {
                       alt={step.imageAlt}
                       className="w-full h-[280px] md:h-[340px] object-cover transition-transform duration-700 group-hover:scale-[1.03]"
                     />
-                    {/* subtle overlay */}
+                    {}
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0A44B1]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   </div>
                 </div>
 
-                {/* Text side */}
+                {}
                 <div className={`flex-1 flex flex-col gap-5 text-center md:text-left ${isReverse ? 'md:items-end md:text-right' : 'md:items-start'}`}>
-                  {/* Icon badge */}
+                  {}
                   <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-[#0A44B1]/8 border border-[#0A44B1]/12 mx-auto md:mx-0 transition-colors duration-300 hover:bg-[#0A44B1]/15">
                     <step.icon className="text-[#0A44B1] text-[24px]" aria-hidden="true" />
                   </div>
 
-                  {/* Step number pill */}
+                  {}
                   <span className="inline-flex items-center gap-1.5 text-[12px] font-bold text-[#0A44B1] uppercase tracking-widest">
                     <span className="w-5 h-[2px] bg-[#E8EE3B] rounded-full inline-block" />
                     Passo {i + 1}
@@ -104,7 +104,7 @@ export const HowItWorks: React.FC = () => {
                     {step.description}
                   </p>
 
-                  {/* Connector line (visible only on desktop) */}
+                  {}
                   {i < steps.length - 1 && (
                     <div className="hidden md:flex items-center gap-2 mt-2">
                       <div className="w-10 h-[2px] bg-[#E8EE3B] rounded-full" />

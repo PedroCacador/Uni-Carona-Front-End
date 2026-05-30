@@ -11,14 +11,14 @@ const stats = [
 export const HeroSection: React.FC = () => {
   return (
     <section className="relative w-full overflow-hidden px-4 pt-8 pb-16 flex flex-col items-center text-center">
-      {/* Decorative background orbs */}
+      {}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] pointer-events-none" aria-hidden="true">
         <div className="absolute top-[-80px] left-[10%] w-[420px] h-[420px] rounded-full bg-[#0A44B1]/8 blur-[100px]" />
         <div className="absolute top-[60px] right-[5%] w-[280px] h-[280px] rounded-full bg-[#E8EE3B]/20 blur-[80px]" />
         <div className="absolute top-[180px] left-[30%] w-[200px] h-[200px] rounded-full bg-[#0A44B1]/5 blur-[60px]" />
       </div>
 
-      {/* Pill badge */}
+      {}
       <div className="relative mb-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
         <span className="inline-flex items-center gap-2 bg-[#E8EE3B]/25 border border-[#E8EE3B]/60 text-[#6b5e00] text-[13px] font-semibold px-4 py-1.5 rounded-full tracking-wide">
           <span className="w-2 h-2 rounded-full bg-[#E8EE3B] shadow-[0_0_8px_#E8EE3B]" />
@@ -26,7 +26,7 @@ export const HeroSection: React.FC = () => {
         </span>
       </div>
 
-      {/* Main headline */}
+      {}
       <h1 className="relative max-w-[820px] text-[2.8rem] md:text-[4rem] lg:text-[4.8rem] font-extrabold leading-[1.08] tracking-tight text-slate-900 mb-6 animate-in fade-in slide-in-from-bottom-6 duration-700 delay-100">
         Sua carona
         <span className="relative inline-block mx-3 text-[#0A44B1]">
@@ -51,13 +51,13 @@ export const HeroSection: React.FC = () => {
         começa aqui
       </h1>
 
-      {/* Subtitle */}
+      {}
       <p className="relative max-w-[560px] text-[1.1rem] md:text-[1.2rem] text-slate-500 leading-relaxed mb-10 animate-in fade-in slide-in-from-bottom-6 duration-700 delay-200">
         Conectamos estudantes de forma segura e econômica. 
         Encontre ou ofereça caronas entre campus com total transparência.
       </p>
 
-      {/* CTA Buttons */}
+      {}
       <div className="relative flex flex-col sm:flex-row items-center gap-4 mb-16 animate-in fade-in slide-in-from-bottom-6 duration-700 delay-300">
         <Link
           to="/caronas"
@@ -76,7 +76,7 @@ export const HeroSection: React.FC = () => {
         </Link>
       </div>
 
-      {/* Stats bar */}
+      {}
       <div className="relative w-full max-w-[680px] animate-in fade-in slide-in-from-bottom-6 duration-700 delay-500">
         <div className="bg-white/90 backdrop-blur-sm border border-neutral-200/60 rounded-3xl shadow-[0_4px_24px_rgba(0,0,0,0.06)] px-6 py-5 flex flex-col sm:flex-row items-center justify-around gap-6 sm:gap-0">
           {stats.map((stat, i) => (

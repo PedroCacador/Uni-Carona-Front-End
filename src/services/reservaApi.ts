@@ -6,7 +6,20 @@ export interface Reserva {
   quantidadePessoas: number;
   caronaId: string;
   usuarioId: string;
-  carona?: any; // To be populated se backend retornar a carona junta
+  carona?: any;
+  usuario?: any;
+  createdAt: string;
+}
+
+export interface Avaliacao {
+  id: string;
+  nota: number;
+  comentario?: string;
+  caronaId: string;
+  avaliadorId: string;
+  avaliadoId: string;
+  avaliador?: { id: string; nome: string };
+  carona?: { origem: string; destino: string; dataHoraSaida: string };
   createdAt: string;
 }
 
@@ -45,6 +58,10 @@ class ReservaApi {
       headers: this.getHeaders(),
     });
 
+    if (response.status === 404) {
+      return [];
+    }
+
     if (!response.ok) {
       throw new Error(`Erro ao buscar reservas: ${response.status}`);
     }
@@ -52,7 +69,52 @@ class ReservaApi {
     return response.json();
   }
 
-  // A API de Avaliações
+  async findByCaronaId(caronaId: string): Promise<Reserva[]> {
+    const response = await fetch(`${this.baseUrl}/reservas/carona/${caronaId}`, {
+      method: 'GET',
+      headers: this.getHeaders(),
+    });
+
+    if (response.status === 404) {
+      return [];
+    }
+
+    if (!response.ok) {
+      throw new Error(`Erro ao buscar reservas da carona: ${response.status}`);
+    }
+
+    return response.json();
+  }
+
+  async atualizarStatus(reservaId: string, status: 'PENDENTE' | 'CONFIRMADA' | 'CANCELADA'): Promise<Reserva> {
+    const response = await fetch(`${this.baseUrl}/reservas/${reservaId}/status`, {
+      method: 'PATCH',
+      headers: this.getHeaders(),
+      body: JSON.stringify({ status }),
+    });
+
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      throw new Error(err.message || `Erro ao atualizar reserva: ${response.status}`);
+    }
+
+    return response.json();
+  }
+
+  async cancelarReserva(reservaId: string): Promise<{ message: string }> {
+    const response = await fetch(`${this.baseUrl}/reservas/${reservaId}`, {
+      method: 'DELETE',
+      headers: this.getHeaders(),
+    });
+
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      throw new Error(err.message || `Erro ao cancelar reserva: ${response.status}`);
+    }
+
+    return response.json();
+  }
+
   async avaliarMotorista(caronaId: string, avaliadorId: string, avaliadoId: string, nota: number, comentario?: string) {
     const response = await fetch(`${this.baseUrl}/avaliacoes`, {
       method: 'POST',
@@ -62,6 +124,19 @@ class ReservaApi {
 
     if (!response.ok) {
       throw new Error(`Erro ao avaliar: ${response.status}`);
+    }
+
+    return response.json();
+  }
+
+  async buscarAvaliacoes(usuarioId: string): Promise<Avaliacao[]> {
+    const response = await fetch(`${this.baseUrl}/avaliacoes/usuario/${usuarioId}`, {
+      method: 'GET',
+      headers: this.getHeaders(),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Erro ao buscar avaliações: ${response.status}`);
     }
 
     return response.json();

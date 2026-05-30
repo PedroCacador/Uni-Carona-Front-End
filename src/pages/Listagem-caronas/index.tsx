@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import CardCarona, { type Carona } from '../../components/CardCarona';
 import { caronaApi, type CaronaFilters } from '../../services/caronaApi';
 import { reservaApi } from '../../services/reservaApi';
+import { useAuth } from '../../contexts/AuthContext';
 import { FiMapPin, FiCalendar, FiUsers, FiSearch, FiX, FiAlertCircle, FiStar, FiClock } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 
@@ -29,7 +30,7 @@ const ListagemCaronas: React.FC = () => {
       const filters: CaronaFilters = {};
       if (origem) filters.origem = origem;
       if (destino) filters.destino = destino;
-      if (apenasComVagas) filters.status = 'ATIVA';
+      if (apenasComVagas) filters.status = 'AGENDADA';
 
       const caronasApi = await caronaApi.buscarCaronas(filters);
 
@@ -78,11 +79,12 @@ const ListagemCaronas: React.FC = () => {
     if (carona) setSelectedCarona(carona);
   };
 
+  const { user, isAuthenticated } = useAuth();
+
   const handleReservar = async () => {
     if (!selectedCarona) return;
 
-    const userStr = localStorage.getItem('user');
-    if (!userStr) {
+    if (!isAuthenticated || !user) {
       alert('Você precisa estar logado para reservar uma carona.');
       navigate('/login');
       return;
@@ -90,12 +92,9 @@ const ListagemCaronas: React.FC = () => {
 
     setReservaLoading(true);
     try {
-      const user = JSON.parse(userStr);
-      await reservaApi.criarReserva(selectedCarona.id, user.id, 1); // Quantidade fixa de 1 pessoa por padrão
+      await reservaApi.criarReserva(selectedCarona.id, user.id, 1);
       alert('Reserva solicitada com sucesso! Acompanhe no seu Perfil.');
       setSelectedCarona(null);
-      // Opcional: Atualizar a lista de caronas para refletir a vaga como pendente, 
-      // mas como ela só subtrai ao confirmar, não precisa recarregar obrigatoriamente.
     } catch (error: any) {
       alert(error.message || 'Erro ao realizar reserva.');
     } finally {
@@ -124,9 +123,9 @@ const ListagemCaronas: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#FAFAF7] pb-20">
-      {/* ── Page header ──────────────────────────────── */}
+      {}
       <div className="w-full bg-[#0A44B1] relative overflow-hidden">
-        {/* Decorative */}
+        {}
         <div className="absolute top-[-60px] right-[-40px] w-[320px] h-[320px] rounded-full bg-white/5 pointer-events-none" aria-hidden="true" />
         <div className="absolute bottom-[-40px] left-[10%] w-[200px] h-[200px] rounded-full bg-[#E8EE3B]/8 pointer-events-none" aria-hidden="true" />
         <div
@@ -163,10 +162,10 @@ const ListagemCaronas: React.FC = () => {
       </div>
 
       <div className="max-w-[1200px] mx-auto px-4 md:px-6">
-        {/* ── Filters ──────────────────────────────────── */}
+        {}
         <div className="bg-white border border-neutral-200/60 rounded-[28px] shadow-[0_8px_32px_rgba(0,0,0,0.06)] p-5 -mt-6 relative z-10 mb-8">
           <div className="flex flex-col sm:flex-row flex-wrap items-center gap-3">
-            {/* Origem */}
+            {}
             <div className={`${fieldClass('origem')} flex-1 min-w-[180px]`}>
               <FiMapPin className={iconClass('origem')} />
               <input
@@ -186,14 +185,14 @@ const ListagemCaronas: React.FC = () => {
               )}
             </div>
 
-            {/* Arrow divider */}
+            {}
             <div className="hidden sm:flex items-center justify-center w-8 h-8 rounded-full bg-[#0A44B1]/6 flex-shrink-0">
               <svg className="w-4 h-4 text-[#0A44B1]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5} aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
               </svg>
             </div>
 
-            {/* Destino */}
+            {}
             <div className={`${fieldClass('destino')} flex-1 min-w-[180px]`}>
               <FiMapPin className={`${iconClass('destino')} text-[#0A44B1]`} />
               <input
@@ -213,7 +212,7 @@ const ListagemCaronas: React.FC = () => {
               )}
             </div>
 
-            {/* Data */}
+            {}
             <div className={`${fieldClass('data')} min-w-[180px]`}>
               <FiCalendar className={iconClass('data')} />
               <input
@@ -228,7 +227,7 @@ const ListagemCaronas: React.FC = () => {
               />
             </div>
 
-            {/* Vagas toggle */}
+            {}
             <label
               htmlFor="filter-vagas"
               className={`flex items-center gap-2 px-4 py-3 rounded-2xl border-2 cursor-pointer transition-all duration-200 flex-shrink-0 font-semibold text-[14px] ${
@@ -248,7 +247,7 @@ const ListagemCaronas: React.FC = () => {
               Com vagas
             </label>
 
-            {/* Clear filters */}
+            {}
             {temFiltrosAtivos && (
               <button
                 onClick={limparFiltros}
@@ -262,7 +261,7 @@ const ListagemCaronas: React.FC = () => {
           </div>
         </div>
 
-        {/* ── Active filters pills ──────────────────────── */}
+        {}
         {temFiltrosAtivos && (
           <div className="flex flex-wrap gap-2 mb-6">
             {origem && (
@@ -292,9 +291,8 @@ const ListagemCaronas: React.FC = () => {
           </div>
         )}
 
-        {/* ── Content ──────────────────────────────────── */}
+        {}
         {loading ? (
-          // Loading skeleton
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
             {Array.from({ length: 6 }).map((_, i) => (
               <div key={i} className="bg-white rounded-[24px] border-2 border-neutral-100 p-6 flex flex-col gap-4 animate-pulse">
@@ -316,7 +314,6 @@ const ListagemCaronas: React.FC = () => {
             ))}
           </div>
         ) : erro ? (
-          // Error state
           <div className="flex flex-col items-center gap-4 py-20 text-center">
             <div className="w-16 h-16 rounded-full bg-red-50 border-2 border-red-100 flex items-center justify-center">
               <FiAlertCircle size={28} className="text-red-400" />
@@ -333,7 +330,6 @@ const ListagemCaronas: React.FC = () => {
             </button>
           </div>
         ) : caronasFiltradas.length === 0 ? (
-          // Empty state
           <div className="flex flex-col items-center gap-5 py-20 text-center">
             <div className="w-20 h-20 rounded-3xl bg-[#0A44B1]/6 border-2 border-[#0A44B1]/10 flex items-center justify-center">
               <svg className="w-9 h-9 text-[#0A44B1]/40" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
@@ -359,7 +355,6 @@ const ListagemCaronas: React.FC = () => {
             )}
           </div>
         ) : (
-          // Cards grid
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
             {caronasFiltradas.map((carona) => (
               <CardCarona key={carona.id} carona={carona} onVerDetalhes={handleVerDetalhes} />
@@ -368,18 +363,18 @@ const ListagemCaronas: React.FC = () => {
         )}
       </div>
 
-      {/* ── Modal de Detalhes da Carona ───────────────── */}
+      {}
       {selectedCarona && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          {/* Backdrop */}
+          {}
           <div 
             className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity"
             onClick={() => !reservaLoading && setSelectedCarona(null)}
           />
           
-          {/* Modal Content */}
+          {}
           <div className="relative w-full max-w-[520px] bg-white rounded-[32px] shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-300">
-            {/* Modal Header */}
+            {}
             <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-neutral-100">
               <h3 className="text-xl font-extrabold text-slate-800">Detalhes da Carona</h3>
               <button 
@@ -391,9 +386,9 @@ const ListagemCaronas: React.FC = () => {
               </button>
             </div>
 
-            {/* Modal Body */}
+            {}
             <div className="p-6 flex flex-col gap-6 overflow-y-auto max-h-[70vh]">
-              {/* Motorista Info */}
+              {}
               <div className="flex items-center gap-4 bg-[#FAFAF7] p-4 rounded-2xl border border-neutral-100">
                 <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#0A44B1] to-[#1a5cd8] flex items-center justify-center flex-shrink-0 text-white text-[18px] font-extrabold shadow-sm">
                   {selectedCarona.motorista.nome.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase()}
@@ -410,7 +405,7 @@ const ListagemCaronas: React.FC = () => {
                 </div>
               </div>
 
-              {/* Rota */}
+              {}
               <div className="flex flex-col gap-0 relative">
                 <div className="absolute left-[19px] top-[30px] bottom-[30px] w-0.5 bg-neutral-200" />
                 
@@ -435,7 +430,7 @@ const ListagemCaronas: React.FC = () => {
                 </div>
               </div>
 
-              {/* Info Grid */}
+              {}
               <div className="grid grid-cols-2 gap-3">
                 <div className="flex flex-col gap-1 bg-[#FAFAF7] p-3.5 rounded-2xl border border-neutral-100">
                   <span className="text-[11px] font-semibold text-slate-400 uppercase">Data da viagem</span>
@@ -463,7 +458,7 @@ const ListagemCaronas: React.FC = () => {
                 </div>
               </div>
 
-              {/* Observações */}
+              {}
               {selectedCarona.observacoes && (
                 <div className="bg-[#0A44B1]/5 p-4 rounded-2xl border border-[#0A44B1]/10">
                   <div className="flex items-center gap-2 mb-1">
@@ -477,7 +472,7 @@ const ListagemCaronas: React.FC = () => {
               )}
             </div>
 
-            {/* Modal Footer */}
+            {}
             <div className="p-6 bg-slate-50 border-t border-neutral-100">
               <button
                 onClick={handleReservar}

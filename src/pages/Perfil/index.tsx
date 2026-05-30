@@ -1,23 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import { FiUser, FiMail, FiBook, FiStar, FiMapPin, FiCalendar, FiCheckCircle, FiXCircle, FiClock, FiX, FiEdit3, FiLock } from 'react-icons/fi';
-import { Link } from 'react-router-dom';
-import { reservaApi, type Reserva } from '../../services/reservaApi';
+import { FiUser, FiMail, FiBook, FiStar, FiMapPin, FiCalendar, FiCheckCircle, FiXCircle, FiClock, FiX, FiEdit3, FiLock, FiLogOut, FiTruck, FiTrash2, FiMessageCircle, FiAlertTriangle } from 'react-icons/fi';
+import { Link, useNavigate } from 'react-router-dom';
+import { reservaApi, type Reserva, type Avaliacao } from '../../services/reservaApi';
 import { caronaApi } from '../../services/caronaApi';
 import { authApi } from '../../services/authApi';
+import { useAuth } from '../../contexts/AuthContext';
 
 const Perfil: React.FC = () => {
-  const [user, setUser] = useState<any>(null);
+  const { user, updateUser, logout, fetchUserProfile } = useAuth();
+  const navigate = useNavigate();
   const [reservas, setReservas] = useState<Reserva[]>([]);
+  const [avaliacoes, setAvaliacoes] = useState<Avaliacao[]>([]);
   const [loading, setLoading] = useState(true);
+  const [cancelando, setCancelando] = useState<string | null>(null);
+  const [deletandoConta, setDeletandoConta] = useState(false);
+  const [confirmDeleteModal, setConfirmDeleteModal] = useState(false);
 
-  // Modal Avaliacao State
   const [avaliarModalAberto, setAvaliarModalAberto] = useState(false);
   const [reservaParaAvaliar, setReservaParaAvaliar] = useState<Reserva | null>(null);
   const [nota, setNota] = useState(0);
   const [comentario, setComentario] = useState('');
   const [enviandoAvaliacao, setEnviandoAvaliacao] = useState(false);
 
-  // Modal Edição State
   const [editModalAberto, setEditModalAberto] = useState(false);
   const [editNome, setEditNome] = useState('');
   const [editCurso, setEditCurso] = useState('');
@@ -28,25 +32,58 @@ const Perfil: React.FC = () => {
   const [erroEdicao, setErroEdicao] = useState('');
 
   useEffect(() => {
-    const userStr = localStorage.getItem('user');
-    if (userStr) {
-      const u = JSON.parse(userStr);
-      setUser(u);
-      carregarReservas(u.id);
+    if (user) {
+      carregarReservas(user.id);
+      carregarAvaliacoes(user.id);
+      fetchUserProfile();
     } else {
       setLoading(false);
     }
-  }, []);
+  }, [user?.id]);
 
   const carregarReservas = async (usuarioId: string) => {
     try {
       const data = await reservaApi.findByUsuarioId(usuarioId);
-      // Sort: Pendentes first, then Confirmadas, then others, and by data
       setReservas(data.reverse());
     } catch (error) {
       console.error('Erro ao buscar reservas', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const carregarAvaliacoes = async (usuarioId: string) => {
+    try {
+      const data = await reservaApi.buscarAvaliacoes(usuarioId);
+      setAvaliacoes(data);
+    } catch (error) {
+      console.error('Erro ao buscar avaliações', error);
+    }
+  };
+
+  const cancelarReserva = async (reservaId: string) => {
+    if (!confirm('Deseja realmente cancelar esta reserva?')) return;
+    setCancelando(reservaId);
+    try {
+      await reservaApi.cancelarReserva(reservaId);
+      if (user) carregarReservas(user.id);
+    } catch (error: any) {
+      alert(error.message || 'Erro ao cancelar reserva.');
+    } finally {
+      setCancelando(null);
+    }
+  };
+
+  const excluirConta = async () => {
+    if (!user) return;
+    setDeletandoConta(true);
+    try {
+      await authApi.deleteAccount(user.id);
+      logout();
+      navigate('/');
+    } catch (error: any) {
+      alert(error.message || 'Erro ao excluir conta.');
+      setDeletandoConta(false);
     }
   };
 
@@ -112,7 +149,6 @@ const Perfil: React.FC = () => {
 
     setSalvandoEdicao(true);
     try {
-      // Se for trocar a senha, precisamos validar a senha atual
       if (novaSenha) {
         try {
           await authApi.login({ email: user.email, senha: senhaAtual });
@@ -121,7 +157,6 @@ const Perfil: React.FC = () => {
         }
       }
 
-      // Atualiza no backend
       const dadosUpdate: any = { nome: editNome, curso: editCurso };
       if (novaSenha) {
         dadosUpdate.senha = novaSenha;
@@ -129,10 +164,7 @@ const Perfil: React.FC = () => {
 
       const userAtualizado = await authApi.updateUser(user.id, dadosUpdate);
       
-      // Atualiza local state e local storage
-      const novoUser = { ...user, ...userAtualizado };
-      setUser(novoUser);
-      localStorage.setItem('user', JSON.stringify(novoUser));
+      updateUser(userAtualizado);
       
       alert('Informações atualizadas com sucesso!');
       setEditModalAberto(false);
@@ -186,7 +218,7 @@ const Perfil: React.FC = () => {
       </div>
 
       <div className="max-w-[1000px] mx-auto px-6 -mt-20 relative z-20">
-        {/* Info Card */}
+        {}
         <div className="bg-white rounded-[32px] border-2 border-neutral-100 shadow-xl p-8 mb-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative">
           <div className="flex items-center gap-6 w-full">
             <div className="w-20 h-20 md:w-24 md:h-24 rounded-[24px] bg-gradient-to-br from-[#0A44B1] to-[#1a5cd8] flex items-center justify-center flex-shrink-0 text-white text-[28px] font-extrabold shadow-lg">
@@ -211,9 +243,17 @@ const Perfil: React.FC = () => {
           >
             <FiEdit3 /> Editar Informações
           </button>
+          <div className="flex gap-2 mt-4 md:mt-0 md:absolute top-20 right-8">
+            <Link to="/motorista" className="flex items-center gap-2 px-4 py-2 bg-[#0A44B1]/10 text-[#0A44B1] rounded-xl font-bold text-[13px] hover:bg-[#0A44B1]/20 transition-colors no-underline">
+              <FiTruck size={14} /> Área Motorista
+            </Link>
+            <button onClick={() => { logout(); navigate('/'); }} className="flex items-center gap-2 px-4 py-2 bg-red-50 text-red-500 rounded-xl font-bold text-[13px] border border-red-200 hover:bg-red-100 transition-colors">
+              <FiLogOut size={14} /> Sair
+            </button>
+          </div>
         </div>
 
-        {/* Reservas */}
+        {}
         <h3 className="text-2xl font-extrabold text-slate-800 mb-6">Minhas Reservas</h3>
         
         {reservas.length === 0 ? (
@@ -264,22 +304,114 @@ const Perfil: React.FC = () => {
                     <span className="flex items-center gap-1"><FiClock /> {d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</span>
                   </div>
 
-                  {isFinalizada && reserva.status !== 'CANCELADA' && (
-                    <button 
-                      onClick={() => abrirModalAvaliacao(reserva)}
-                      className="mt-auto w-full border-2 border-[#0A44B1] text-[#0A44B1] py-3 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-[#0A44B1] hover:text-white transition-colors"
-                    >
-                      <FiStar /> Avaliar Motorista
-                    </button>
-                  )}
+                  <div className="flex gap-2 mt-auto">
+                    {reserva.status !== 'CANCELADA' && !isFinalizada && (
+                      <button
+                        onClick={() => cancelarReserva(reserva.id)}
+                        disabled={cancelando === reserva.id}
+                        className="flex-1 border-2 border-red-200 text-red-500 py-2.5 rounded-xl font-bold text-[13px] flex items-center justify-center gap-1.5 hover:bg-red-50 transition-colors disabled:opacity-50"
+                      >
+                        {cancelando === reserva.id ? (
+                          <><div className="w-3.5 h-3.5 border-2 border-red-400 border-t-transparent rounded-full animate-spin" /> Cancelando...</>
+                        ) : (
+                          <><FiXCircle size={14} /> Cancelar</>
+                        )}
+                      </button>
+                    )}
+                    {isFinalizada && reserva.status !== 'CANCELADA' && (
+                      <button
+                        onClick={() => abrirModalAvaliacao(reserva)}
+                        className="flex-1 border-2 border-[#0A44B1] text-[#0A44B1] py-2.5 rounded-xl font-bold text-[13px] flex items-center justify-center gap-1.5 hover:bg-[#0A44B1] hover:text-white transition-colors"
+                      >
+                        <FiStar size={14} /> Avaliar
+                      </button>
+                    )}
+                  </div>
                 </div>
               );
             })}
           </div>
         )}
+
+        {}
+        <h3 className="text-2xl font-extrabold text-slate-800 mb-6 mt-12">Avaliações Recebidas</h3>
+        {avaliacoes.length === 0 ? (
+          <div className="bg-white rounded-[24px] border-2 border-dashed border-neutral-200 p-10 text-center flex flex-col items-center">
+            <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center mb-3 text-slate-300"><FiStar size={22} /></div>
+            <h4 className="text-[16px] font-bold text-slate-700">Nenhuma avaliação ainda</h4>
+            <p className="text-slate-400 mt-1 text-[14px] max-w-sm">Suas avaliações aparecerão aqui após completar viagens.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {avaliacoes.map(av => (
+              <div key={av.id} className="bg-white rounded-[24px] border-2 border-neutral-100 p-5 shadow-sm">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-1">
+                    {[1,2,3,4,5].map(s => (
+                      <FiStar key={s} size={16} className={s <= av.nota ? 'text-[#E8EE3B] fill-[#E8EE3B]' : 'text-slate-200 fill-slate-200'} />
+                    ))}
+                    <span className="text-[13px] font-bold text-slate-600 ml-1">{av.nota.toFixed(1)}</span>
+                  </div>
+                  <span className="text-[12px] text-slate-400 font-medium">
+                    {av.createdAt ? new Date(av.createdAt).toLocaleDateString('pt-BR') : ''}
+                  </span>
+                </div>
+                {av.comentario && (
+                  <p className="text-[14px] text-slate-600 leading-relaxed flex items-start gap-2">
+                    <FiMessageCircle size={14} className="text-[#0A44B1] flex-shrink-0 mt-0.5" />
+                    {av.comentario}
+                  </p>
+                )}
+                {av.avaliador && (
+                  <div className="mt-3 pt-3 border-t border-neutral-100 text-[12px] text-slate-400 font-medium">
+                    Por: {av.avaliador.nome}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+
+        {}
+        <div className="mt-12 pt-8 border-t-2 border-neutral-100">
+          <div className="flex items-center justify-between bg-red-50/50 border-2 border-red-100 rounded-[24px] p-6">
+            <div>
+              <h4 className="text-[15px] font-bold text-red-700 flex items-center gap-2"><FiAlertTriangle size={16} /> Zona de Perigo</h4>
+              <p className="text-red-500/70 text-[13px] mt-1">Excluir sua conta é irreversível. Todos os seus dados serão removidos.</p>
+            </div>
+            <button
+              onClick={() => setConfirmDeleteModal(true)}
+              className="flex items-center gap-2 px-5 py-2.5 bg-red-500 text-white rounded-xl font-bold text-[13px] hover:bg-red-600 transition-colors shrink-0"
+            >
+              <FiTrash2 size={14} /> Excluir Conta
+            </button>
+          </div>
+        </div>
       </div>
 
-      {/* Modal de Avaliação */}
+      {}
+      {confirmDeleteModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => !deletandoConta && setConfirmDeleteModal(false)} />
+          <div className="relative w-full max-w-[400px] bg-white rounded-[32px] shadow-2xl p-8 flex flex-col items-center animate-in fade-in zoom-in-95 duration-300">
+            <div className="w-16 h-16 bg-red-100 text-red-500 rounded-full flex items-center justify-center mb-4">
+              <FiAlertTriangle size={32} />
+            </div>
+            <h3 className="text-xl font-extrabold text-slate-800 text-center">Excluir minha conta?</h3>
+            <p className="text-slate-500 text-center text-[14px] mt-2 mb-6">Esta ação não pode ser desfeita. Todas as suas reservas e dados serão removidos permanentemente.</p>
+            <div className="flex gap-3 w-full">
+              <button onClick={() => setConfirmDeleteModal(false)} disabled={deletandoConta} className="flex-1 border-2 border-neutral-200 text-slate-600 py-3 rounded-xl font-bold hover:bg-slate-50 transition-colors">
+                Cancelar
+              </button>
+              <button onClick={excluirConta} disabled={deletandoConta} className="flex-1 bg-red-500 text-white py-3 rounded-xl font-bold hover:bg-red-600 transition-colors disabled:opacity-50 flex items-center justify-center gap-2">
+                {deletandoConta ? <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> Excluindo...</> : 'Sim, excluir'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {}
       {avaliarModalAberto && reservaParaAvaliar && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => !enviandoAvaliacao && setAvaliarModalAberto(false)} />
@@ -294,7 +426,7 @@ const Perfil: React.FC = () => {
             <h3 className="text-xl font-extrabold text-slate-800 text-center">Como foi a viagem?</h3>
             <p className="text-slate-500 text-center text-[14px] mt-2 mb-6">Avalie o motorista para ajudar a manter a qualidade da comunidade.</p>
             
-            {/* Estrelas */}
+            {}
             <div className="flex gap-2 mb-6">
               {[1, 2, 3, 4, 5].map((star) => (
                 <button 
@@ -325,12 +457,12 @@ const Perfil: React.FC = () => {
         </div>
       )}
 
-      {/* Modal de Edição de Perfil */}
+      {}
       {editModalAberto && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => !salvandoEdicao && setEditModalAberto(false)} />
           <div className="relative w-full max-w-[500px] bg-white rounded-[32px] shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-300">
-            {/* Header Modal */}
+            {}
             <div className="flex items-center justify-between px-6 py-5 border-b border-neutral-100 bg-slate-50/50">
               <h3 className="text-[18px] font-extrabold text-slate-800 flex items-center gap-2">
                 <FiEdit3 className="text-[#0A44B1]" /> Editar Perfil

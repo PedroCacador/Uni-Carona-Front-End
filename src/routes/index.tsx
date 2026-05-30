@@ -7,9 +7,10 @@ import SobreNos from '../pages/SobreNos';
 import Servicos from '../pages/Servicos';
 import Seguranca from '../pages/Seguranca';
 import Perfil from '../pages/Perfil';
+import Motorista from '../pages/Motorista';
 import { Header } from '../components/Header';
+import PrivateRoute from '../components/PrivateRoute';
 
-// Layout com Header — para páginas internas
 const AppLayout = () => {
   return (
     <div className="min-h-screen bg-background">
@@ -21,7 +22,6 @@ const AppLayout = () => {
   );
 };
 
-// Layout limpo — para páginas de autenticação (sem Header, sem padding-top)
 const AuthLayout = () => {
   return <Outlet />;
 };
@@ -53,7 +53,11 @@ const router = createBrowserRouter([
       },
       {
         path: '/perfil',
-        element: <Perfil />,
+        element: <PrivateRoute><Perfil /></PrivateRoute>,
+      },
+      {
+        path: '/motorista',
+        element: <PrivateRoute><Motorista /></PrivateRoute>,
       },
     ],
   },

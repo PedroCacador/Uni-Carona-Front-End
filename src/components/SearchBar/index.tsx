@@ -10,7 +10,7 @@ export const SearchBar: React.FC = () => {
       <div 
         className="max-w-[1100px] mx-auto bg-white/95 backdrop-blur-sm rounded-[32px] shadow-premium border border-neutral-200/60 p-2 flex flex-col md:flex-row items-stretch md:items-center transition-all duration-500 animate-in fade-in slide-in-from-bottom-6 group/container"
       >
-        {/* Origem */}
+        {}
         <div 
           className={`relative flex-[1.2] px-6 py-3 md:py-4 flex items-center gap-4 cursor-pointer group transition-all duration-300 rounded-[24px] md:rounded-none ${focusedField === 'origem' ? 'bg-white shadow-glow' : 'hover:bg-neutral-50/80'}`}
           onClick={() => document.getElementById('input-origem')?.focus()}
@@ -33,7 +33,7 @@ export const SearchBar: React.FC = () => {
 
         <div className="hidden md:block w-px h-10 bg-neutral-200/60" />
 
-        {/* Destino */}
+        {}
         <div 
           className={`relative flex-[1.2] px-6 py-3 md:py-4 flex items-center gap-4 cursor-pointer group transition-all duration-300 rounded-[24px] md:rounded-none ${focusedField === 'destino' ? 'bg-white shadow-glow' : 'hover:bg-neutral-50/80'}`}
           onClick={() => document.getElementById('input-destino')?.focus()}
@@ -56,7 +56,7 @@ export const SearchBar: React.FC = () => {
 
         <div className="hidden md:block w-px h-10 bg-neutral-200/60" />
 
-        {/* Data */}
+        {}
         <div 
           className={`relative flex-1 px-6 py-3 md:py-4 flex items-center gap-4 cursor-pointer group transition-all duration-300 rounded-[24px] md:rounded-none ${focusedField === 'data' ? 'bg-white shadow-glow' : 'hover:bg-neutral-50/80'}`}
           onClick={() => document.getElementById('input-data')?.focus()}
@@ -79,7 +79,7 @@ export const SearchBar: React.FC = () => {
 
         <div className="hidden md:block w-px h-10 bg-neutral-200/60" />
 
-        {/* Vagas */}
+        {}
         <div 
           className={`relative flex-1 px-6 py-3 md:py-4 flex items-center gap-4 cursor-pointer group transition-all duration-300 rounded-[24px] md:rounded-none ${focusedField === 'vagas' ? 'bg-white shadow-glow' : 'hover:bg-neutral-50/80'}`}
           onClick={() => document.getElementById('input-vagas')?.focus()}
@@ -101,7 +101,7 @@ export const SearchBar: React.FC = () => {
           </div>
         </div>
 
-        {/* Botão Procurar */}
+        {}
         <Link to="/caronas" className="md:ml-2 mt-4 md:mt-0 flex-shrink-0 no-underline">
           <button 
             type="button" 

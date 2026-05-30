@@ -41,12 +41,12 @@ export const Footer: React.FC = () => {
     <footer className="w-full bg-[#0A44B1] rounded-t-[48px] mt-0 pt-16 pb-8 px-6 md:px-12">
       <div className="max-w-[1200px] mx-auto">
 
-        {/* Top row */}
+        {}
         <div className="flex flex-col lg:flex-row justify-between gap-12 mb-14">
 
-          {/* Brand column */}
+          {}
           <div className="flex flex-col gap-5 max-w-[320px]">
-            {/* Logo */}
+            {}
             <Link to="/" className="flex items-center gap-1 group no-underline w-fit">
               <span className="text-2xl font-extrabold text-white tracking-tight transition-transform group-hover:scale-[1.02]">
                 UniCarona
@@ -57,7 +57,7 @@ export const Footer: React.FC = () => {
               Conectando estudantes para viagens mais seguras, econômicas e sustentáveis. Sua comunidade universitária em movimento.
             </p>
 
-            {/* Social icons */}
+            {}
             <div className="flex items-center gap-3 mt-1">
               {socials.map((s) => (
                 <a
@@ -72,7 +72,7 @@ export const Footer: React.FC = () => {
             </div>
           </div>
 
-          {/* Links columns */}
+          {}
           <div className="grid grid-cols-2 md:grid-cols-3 gap-10">
             {footerLinks.map((col) => (
               <div key={col.title} className="flex flex-col gap-4">
@@ -101,10 +101,10 @@ export const Footer: React.FC = () => {
           </div>
         </div>
 
-        {/* Divider */}
+        {}
         <div className="w-full h-px bg-white/10 mb-8" />
 
-        {/* Bottom bar */}
+        {}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-white/40 text-[13px]">
           <span>© {new Date().getFullYear()} UniCarona. Todos os direitos reservados.</span>
           <div className="flex items-center gap-5">

@@ -1,16 +1,15 @@
-// API service para integração com backend de caronas
-
-const API_BASE_URL = 'http://localhost:3333'; // Backend rodando na porta 3333
+const API_BASE_URL = 'http://localhost:3333'; 
 
 export interface Usuario {
   id: string;
   nome: string;
-  universidade: string;
+  curso: string;
   avaliacao?: number;
 }
 
 export interface Veiculo {
   id: string;
+  marca: string;
   modelo: string;
   placa: string;
   cor?: string;
@@ -23,17 +22,16 @@ export interface CaronaResponse {
   veiculo?: Veiculo;
   origem: string;
   destino: string;
-  dataHora: string;
-  vagas: number;
-  preco: number;
-  observacoes?: string;
-  status: 'ATIVA' | 'CANCELADA' | 'COMPLETA';
+  dataHoraSaida: string;
+  assentosDisponiveis: number;
+  valorAjuda: number | string;
+  status: 'AGENDADA' | 'EM_ANDAMENTO' | 'FINALIZADA' | 'CANCELADA';
 }
 
 export interface CaronaFilters {
   origem?: string;
   destino?: string;
-  status?: 'ATIVA' | 'CANCELADA' | 'COMPLETA';
+  status?: 'AGENDADA' | 'EM_ANDAMENTO' | 'FINALIZADA' | 'CANCELADA';
   motoristaId?: string;
   apenasFuturas?: boolean;
   dataDe?: Date | string;
@@ -49,7 +47,6 @@ class CaronaApi {
     this.baseUrl = baseUrl;
   }
 
-  // Buscar caronas com filtros
   async buscarCaronas(filters: CaronaFilters): Promise<CaronaResponse[]> {
     try {
       const params = new URLSearchParams();
@@ -98,7 +95,6 @@ class CaronaApi {
     }
   }
 
-  // Buscar apenas caronas ativas
   async buscarCaronasAtivas(): Promise<CaronaResponse[]> {
     try {
       const token = localStorage.getItem('token');
@@ -126,7 +122,6 @@ class CaronaApi {
     }
   }
 
-  // Buscar carona por ID
   async buscarCaronaPorId(id: string): Promise<CaronaResponse> {
     try {
       const token = localStorage.getItem('token');
@@ -154,7 +149,6 @@ class CaronaApi {
     }
   }
 
-  // Buscar caronas por motorista
   async buscarCaronasPorMotorista(motoristaId: string): Promise<CaronaResponse[]> {
     try {
       const token = localStorage.getItem('token');
@@ -171,6 +165,10 @@ class CaronaApi {
         headers,
       });
 
+      if (response.status === 404) {
+        return [];
+      }
+
       if (!response.ok) {
         throw new Error(`Erro na requisição: ${response.status}`);
       }
@@ -182,7 +180,6 @@ class CaronaApi {
     }
   }
 
-  // Criar nova carona
   async criarCarona(data: Omit<CaronaResponse, 'id' | 'motorista'>): Promise<CaronaResponse> {
     try {
       const token = localStorage.getItem('token');
@@ -211,7 +208,6 @@ class CaronaApi {
     }
   }
 
-  // Atualizar carona
   async atualizarCarona(id: string, data: Partial<CaronaResponse>): Promise<CaronaResponse> {
     try {
       const token = localStorage.getItem('token');
@@ -240,8 +236,7 @@ class CaronaApi {
     }
   }
 
-  // Atualizar status da carona
-  async atualizarStatusCarona(id: string, status: 'ATIVA' | 'CANCELADA' | 'COMPLETA'): Promise<CaronaResponse> {
+  async atualizarStatusCarona(id: string, status: 'AGENDADA' | 'EM_ANDAMENTO' | 'FINALIZADA' | 'CANCELADA'): Promise<CaronaResponse> {
     try {
       const token = localStorage.getItem('token');
       const headers: HeadersInit = {
@@ -269,7 +264,6 @@ class CaronaApi {
     }
   }
 
-  // Buscar caronas com filtros padrão (AGENDADA + apenas futuras)
   async buscarCaronasComFiltrosPadrao(filters?: Omit<CaronaFilters, 'status' | 'apenasFuturas'>): Promise<CaronaResponse[]> {
     try {
       const params = new URLSearchParams();
@@ -316,7 +310,6 @@ class CaronaApi {
     }
   }
 
-  // Cancelar carona
   async cancelarCarona(id: string): Promise<{ message: string; carona: CaronaResponse }> {
     try {
       const token = localStorage.getItem('token');

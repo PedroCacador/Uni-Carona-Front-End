@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { authApi } from '../../services/authApi';
-import { FiUser, FiMail, FiLock, FiEye, FiEyeOff, FiArrowLeft, FiBook, FiHash } from 'react-icons/fi';
+import { useAuth } from '../../contexts/AuthContext';
+import { FiUser, FiMail, FiLock, FiEye, FiEyeOff, FiArrowLeft, FiBook, FiPhone, FiCreditCard, FiCalendar } from 'react-icons/fi';
 
 type TipoConta = 'passageiro' | 'motorista';
 
@@ -9,8 +9,10 @@ const Cadastro: React.FC = () => {
   const [tipo, setTipo] = useState<TipoConta>('passageiro');
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
-  const [universidade, setUniversidade] = useState('');
-  const [matricula, setMatricula] = useState('');
+  const [curso, setCurso] = useState('');
+  const [cpf, setCpf] = useState('');
+  const [whatsapp, setWhatsapp] = useState('');
+  const [dataNascimento, setDataNascimento] = useState('');
   const [senha, setSenha] = useState('');
   const [confirmarSenha, setConfirmarSenha] = useState('');
   const [mostrarSenha, setMostrarSenha] = useState(false);
@@ -20,12 +22,43 @@ const Cadastro: React.FC = () => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { register } = useAuth();
+
+  const formatCpf = (value: string) => {
+    const digits = value.replace(/\D/g, '').slice(0, 11);
+    if (digits.length <= 3) return digits;
+    if (digits.length <= 6) return `${digits.slice(0, 3)}.${digits.slice(3)}`;
+    if (digits.length <= 9) return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6)}`;
+    return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6, 9)}-${digits.slice(9)}`;
+  };
+
+  const formatPhone = (value: string) => {
+    const digits = value.replace(/\D/g, '').slice(0, 11);
+    if (digits.length <= 2) return digits;
+    if (digits.length <= 7) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
+    return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
+  };
 
   const validateForm = () => {
     const e: Record<string, string> = {};
     if (!nome.trim() || nome.trim().length < 3) e.nome = 'Nome deve ter pelo menos 3 caracteres';
     if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) e.email = 'E-mail inválido';
-    if (!universidade.trim()) e.universidade = 'Universidade é obrigatória';
+    if (!curso.trim()) e.curso = 'Curso é obrigatório';
+    
+    const cpfDigits = cpf.replace(/\D/g, '');
+    if (!cpfDigits || cpfDigits.length !== 11) e.cpf = 'CPF deve ter 11 dígitos';
+    
+    const whatsDigits = whatsapp.replace(/\D/g, '');
+    if (!whatsDigits || whatsDigits.length < 10 || whatsDigits.length > 11) e.whatsapp = 'WhatsApp inválido';
+    
+    if (!dataNascimento) e.dataNascimento = 'Data de nascimento é obrigatória';
+    else {
+      const birth = new Date(dataNascimento);
+      const now = new Date();
+      const age = now.getFullYear() - birth.getFullYear();
+      if (age < 16 || age > 100) e.dataNascimento = 'Idade deve ser entre 16 e 100 anos';
+    }
+    
     if (!senha || senha.length < 6) e.senha = 'Senha deve ter no mínimo 6 caracteres';
     if (senha !== confirmarSenha) e.confirmarSenha = 'As senhas não coincidem';
     if (!termos) e.termos = 'Aceite os termos para continuar';
@@ -36,30 +69,20 @@ const Cadastro: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
+    setIsLoading(true);
     try {
-      // Mocking missing backend fields (CPF, WhatsApp, DataNascimento)
       const dataToSend = {
         nome,
         email,
         senha,
-        curso: universidade || 'Não informado',
-        cpf: Math.random().toString().substring(2, 13), // mock unique CPF
-        whatsapp: '32999999999',
-        dataNascimento: new Date('2000-01-01').toISOString(),
+        curso,
+        cpf: cpf.replace(/\D/g, ''),
+        whatsapp: whatsapp.replace(/\D/g, ''),
+        dataNascimento: new Date(dataNascimento).toISOString(),
       };
 
-      await authApi.register(dataToSend);
-      
-      // Auto-login
-      const loginRes = await authApi.login({ email, senha });
-      localStorage.setItem('token', loginRes.token);
-      localStorage.setItem('userEmail', email);
-      if (loginRes.usuario) {
-        localStorage.setItem('user', JSON.stringify(loginRes.usuario));
-      }
-      
-      alert('Cadastro realizado com sucesso!');
-      window.location.href = '/caronas';
+      await register(dataToSend);
+      navigate('/caronas');
     } catch (error: any) {
       alert(error.message || 'Erro ao realizar cadastro');
     } finally {
@@ -77,7 +100,7 @@ const Cadastro: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#FAFAF7] flex">
-      {/* Left branding panel */}
+      {}
       <div className="hidden lg:flex lg:w-[42%] bg-[#0A44B1] flex-col justify-between p-12 relative overflow-hidden">
         <div className="absolute top-[-80px] right-[-60px] w-[320px] h-[320px] rounded-full bg-white/5 pointer-events-none" />
         <div className="absolute bottom-[-40px] left-[-40px] w-[240px] h-[240px] rounded-full bg-[#E8EE3B]/10 pointer-events-none" />
@@ -103,7 +126,7 @@ const Cadastro: React.FC = () => {
             </p>
           </div>
 
-          {/* Steps */}
+          {}
           <div className="flex flex-col gap-4 mt-2">
             {['Crie sua conta em 2 minutos', 'Busque caronas na sua rota', 'Viaje com segurança'].map((step, i) => (
               <div key={step} className="flex items-center gap-3">
@@ -119,7 +142,7 @@ const Cadastro: React.FC = () => {
         <p className="text-white/30 text-[13px]">© {new Date().getFullYear()} UniCarona · Grátis para estudantes</p>
       </div>
 
-      {/* Right form panel */}
+      {}
       <div className="flex-1 flex flex-col items-center justify-start px-6 py-10 overflow-y-auto relative">
         <Link to="/" className="self-start mb-6 inline-flex items-center gap-2 text-slate-500 hover:text-[#0A44B1] text-[14px] font-medium transition-colors no-underline group" id="register-back-button">
           <span className="w-8 h-8 rounded-full bg-white border border-neutral-200 flex items-center justify-center group-hover:border-[#0A44B1]/30 transition-colors shadow-sm">
@@ -128,7 +151,7 @@ const Cadastro: React.FC = () => {
           Voltar
         </Link>
 
-        <div className="w-full max-w-[480px] animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div className="w-full max-w-[520px] animate-in fade-in slide-in-from-bottom-4 duration-500">
           <div className="lg:hidden flex items-center gap-1 mb-6 justify-center">
             <span className="text-2xl font-extrabold text-[#0A44B1] tracking-tight">UniCarona</span>
             <div className="w-2 h-2 rounded-full bg-[#E8EE3B] ml-0.5 mt-1 animate-pulse" />
@@ -143,7 +166,7 @@ const Cadastro: React.FC = () => {
           </div>
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
-            {/* Account type toggle */}
+            {}
             <div className="flex flex-col gap-2">
               <label className="text-[13px] font-semibold text-slate-700 uppercase tracking-wide">Tipo de conta</label>
               <div className="grid grid-cols-2 gap-3">
@@ -166,7 +189,7 @@ const Cadastro: React.FC = () => {
               </div>
             </div>
 
-            {/* Nome */}
+            {}
             <div className="flex flex-col gap-1.5">
               <label htmlFor="register-nome" className="text-[13px] font-semibold text-slate-700 uppercase tracking-wide">Nome completo</label>
               <div className={fieldClass('nome', !!errors.nome)}>
@@ -178,7 +201,7 @@ const Cadastro: React.FC = () => {
               {errors.nome && <span className="text-red-500 text-[12px] font-medium mt-0.5">{errors.nome}</span>}
             </div>
 
-            {/* Email */}
+            {}
             <div className="flex flex-col gap-1.5">
               <label htmlFor="register-email" className="text-[13px] font-semibold text-slate-700 uppercase tracking-wide">E-mail</label>
               <div className={fieldClass('email', !!errors.email)}>
@@ -190,32 +213,55 @@ const Cadastro: React.FC = () => {
               {errors.email && <span className="text-red-500 text-[12px] font-medium mt-0.5">{errors.email}</span>}
             </div>
 
-            {/* Universidade + Matrícula lado a lado */}
+            {}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="flex flex-col gap-1.5">
-                <label htmlFor="register-universidade" className="text-[13px] font-semibold text-slate-700 uppercase tracking-wide">Universidade</label>
-                <div className={fieldClass('universidade', !!errors.universidade)}>
-                  <FiBook className={iconClass('universidade', !!errors.universidade)} />
-                  <input id="register-universidade" type="text" placeholder="Ex: USP, UNICAMP..." value={universidade}
-                    onChange={(e) => setUniversidade(e.target.value)} onFocus={() => setFocusedField('universidade')} onBlur={() => setFocusedField(null)}
-                    disabled={isLoading} className={inputClass} />
+                <label htmlFor="register-cpf" className="text-[13px] font-semibold text-slate-700 uppercase tracking-wide">CPF</label>
+                <div className={fieldClass('cpf', !!errors.cpf)}>
+                  <FiCreditCard className={iconClass('cpf', !!errors.cpf)} />
+                  <input id="register-cpf" type="text" placeholder="000.000.000-00" value={cpf}
+                    onChange={(e) => setCpf(formatCpf(e.target.value))} onFocus={() => setFocusedField('cpf')} onBlur={() => setFocusedField(null)}
+                    disabled={isLoading} className={inputClass} maxLength={14} />
                 </div>
-                {errors.universidade && <span className="text-red-500 text-[12px] font-medium mt-0.5">{errors.universidade}</span>}
+                {errors.cpf && <span className="text-red-500 text-[12px] font-medium mt-0.5">{errors.cpf}</span>}
               </div>
               <div className="flex flex-col gap-1.5">
-                <label htmlFor="register-matricula" className="text-[13px] font-semibold text-slate-700 uppercase tracking-wide">
-                  Matrícula <span className="text-slate-400 normal-case font-normal">(opcional)</span>
-                </label>
-                <div className={fieldClass('matricula')}>
-                  <FiHash className={iconClass('matricula')} />
-                  <input id="register-matricula" type="text" placeholder="Nº de matrícula" value={matricula}
-                    onChange={(e) => setMatricula(e.target.value)} onFocus={() => setFocusedField('matricula')} onBlur={() => setFocusedField(null)}
-                    disabled={isLoading} className={inputClass} />
+                <label htmlFor="register-whatsapp" className="text-[13px] font-semibold text-slate-700 uppercase tracking-wide">WhatsApp</label>
+                <div className={fieldClass('whatsapp', !!errors.whatsapp)}>
+                  <FiPhone className={iconClass('whatsapp', !!errors.whatsapp)} />
+                  <input id="register-whatsapp" type="text" placeholder="(00) 00000-0000" value={whatsapp}
+                    onChange={(e) => setWhatsapp(formatPhone(e.target.value))} onFocus={() => setFocusedField('whatsapp')} onBlur={() => setFocusedField(null)}
+                    disabled={isLoading} className={inputClass} maxLength={15} />
                 </div>
+                {errors.whatsapp && <span className="text-red-500 text-[12px] font-medium mt-0.5">{errors.whatsapp}</span>}
               </div>
             </div>
 
-            {/* Senha */}
+            {}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="flex flex-col gap-1.5">
+                <label htmlFor="register-curso" className="text-[13px] font-semibold text-slate-700 uppercase tracking-wide">Curso</label>
+                <div className={fieldClass('curso', !!errors.curso)}>
+                  <FiBook className={iconClass('curso', !!errors.curso)} />
+                  <input id="register-curso" type="text" placeholder="Ex: Eng. de Software" value={curso}
+                    onChange={(e) => setCurso(e.target.value)} onFocus={() => setFocusedField('curso')} onBlur={() => setFocusedField(null)}
+                    disabled={isLoading} className={inputClass} />
+                </div>
+                {errors.curso && <span className="text-red-500 text-[12px] font-medium mt-0.5">{errors.curso}</span>}
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label htmlFor="register-datanascimento" className="text-[13px] font-semibold text-slate-700 uppercase tracking-wide">Data de Nascimento</label>
+                <div className={fieldClass('dataNascimento', !!errors.dataNascimento)}>
+                  <FiCalendar className={iconClass('dataNascimento', !!errors.dataNascimento)} />
+                  <input id="register-datanascimento" type="date" value={dataNascimento}
+                    onChange={(e) => setDataNascimento(e.target.value)} onFocus={() => setFocusedField('dataNascimento')} onBlur={() => setFocusedField(null)}
+                    disabled={isLoading} className={inputClass} max={new Date().toISOString().split('T')[0]} />
+                </div>
+                {errors.dataNascimento && <span className="text-red-500 text-[12px] font-medium mt-0.5">{errors.dataNascimento}</span>}
+              </div>
+            </div>
+
+            {}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="flex flex-col gap-1.5">
                 <label htmlFor="register-senha" className="text-[13px] font-semibold text-slate-700 uppercase tracking-wide">Senha</label>
@@ -246,7 +292,7 @@ const Cadastro: React.FC = () => {
               </div>
             </div>
 
-            {/* Termos */}
+            {}
             <label className="flex items-start gap-3 cursor-pointer select-none group" htmlFor="register-termos">
               <div className="relative mt-0.5">
                 <input type="checkbox" id="register-termos" className="sr-only peer" checked={termos} onChange={(e) => setTermos(e.target.checked)} />

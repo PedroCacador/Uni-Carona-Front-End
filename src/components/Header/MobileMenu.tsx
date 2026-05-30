@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FiMenu, FiX } from 'react-icons/fi';
+import { useAuth } from '../../contexts/AuthContext';
 
 export const MobileMenu: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { isAuthenticated, logout } = useAuth();
 
   const toggleMenu = () => setIsOpen(!isOpen);
 
@@ -36,13 +38,34 @@ export const MobileMenu: React.FC = () => {
               {item.label}
             </Link>
           ))}
-          <Link
-            to="/cadastro"
-            onClick={() => setIsOpen(false)}
-            className="mt-2 w-full bg-primary text-white py-3 rounded-xl font-semibold text-center hover:bg-primary-hover transition-all active:scale-95 shadow-lg shadow-primary/20"
-          >
-            Primeira viagem
-          </Link>
+          
+          <div className="flex flex-col gap-3 mt-2">
+            {isAuthenticated ? (
+              <button
+                onClick={() => { logout(); setIsOpen(false); window.location.href = '/'; }}
+                className="w-full bg-red-50 text-red-500 py-3 rounded-xl font-semibold text-center hover:bg-red-100 transition-colors"
+              >
+                Sair
+              </button>
+            ) : (
+              <>
+                <Link
+                  to="/login"
+                  onClick={() => setIsOpen(false)}
+                  className="w-full bg-slate-50 text-slate-600 py-3 rounded-xl font-semibold text-center hover:bg-slate-100 transition-colors"
+                >
+                  Entrar
+                </Link>
+                <Link
+                  to="/cadastro"
+                  onClick={() => setIsOpen(false)}
+                  className="w-full bg-primary text-white py-3 rounded-xl font-semibold text-center hover:bg-primary-hover transition-all active:scale-95 shadow-lg shadow-primary/20"
+                >
+                  Primeira viagem
+                </Link>
+              </>
+            )}
+          </div>
         </div>
       )}
     </div>

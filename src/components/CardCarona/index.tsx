@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { FiMapPin, FiCalendar, FiClock, FiUsers, FiStar, FiArrowRight, FiAlertCircle } from 'react-icons/fi';
 
-// Interface que condiz com o retorno esperado do backend
 export interface Carona {
   id: string;
   motorista: {
@@ -60,7 +59,6 @@ const CardCarona: React.FC<CardCaronaProps> = ({ carona, onVerDetalhes }) => {
   const status = carona.status ?? 'ativa';
   const sc = statusConfig[status] ?? statusConfig.ativa;
 
-  // Initials for avatar
   const initials = carona.motorista.nome
     .split(' ')
     .slice(0, 2)
@@ -76,14 +74,14 @@ const CardCarona: React.FC<CardCaronaProps> = ({ carona, onVerDetalhes }) => {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      {/* Top accent bar */}
+      {}
       <div className={`h-1 w-full transition-all duration-300 ${hovered && isDisponivel() ? 'bg-[#0A44B1]' : 'bg-transparent'}`} />
 
       <div className="p-6 flex flex-col gap-5 flex-1">
-        {/* Header: driver info + status badge */}
+        {}
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-3">
-            {/* Avatar */}
+            {}
             <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#0A44B1] to-[#1a5cd8] flex items-center justify-center flex-shrink-0 text-white text-[15px] font-extrabold shadow-[0_4px_12px_rgba(10,68,177,0.2)]">
               {initials}
             </div>
@@ -107,14 +105,14 @@ const CardCarona: React.FC<CardCaronaProps> = ({ carona, onVerDetalhes }) => {
             </div>
           </div>
 
-          {/* Status badge */}
+          {}
           <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full border text-[12px] font-semibold flex-shrink-0 ${sc.bg} ${sc.text} ${sc.border}`}>
             <span className={`w-1.5 h-1.5 rounded-full ${sc.dot}`} />
             {sc.label}
           </div>
         </div>
 
-        {/* Route */}
+        {}
         <div className="flex flex-col gap-0 bg-[#FAFAF7] rounded-2xl px-4 py-3 border border-neutral-100">
           <div className="flex items-center gap-3">
             <div className="flex flex-col items-center gap-1 flex-shrink-0">
@@ -135,7 +133,7 @@ const CardCarona: React.FC<CardCaronaProps> = ({ carona, onVerDetalhes }) => {
           </div>
         </div>
 
-        {/* Date, time and seats */}
+        {}
         <div className="grid grid-cols-3 gap-2">
           <div className="flex flex-col items-center gap-1.5 bg-[#FAFAF7] rounded-xl p-2.5 border border-neutral-100">
             <FiCalendar size={14} className="text-[#0A44B1]" />
@@ -155,7 +153,7 @@ const CardCarona: React.FC<CardCaronaProps> = ({ carona, onVerDetalhes }) => {
           </div>
         </div>
 
-        {/* Observations */}
+        {}
         {carona.observacoes && (
           <div className="flex items-start gap-2 bg-[#0A44B1]/4 rounded-xl px-3 py-2.5 border border-[#0A44B1]/10">
             <FiAlertCircle size={13} className="text-[#0A44B1] flex-shrink-0 mt-0.5" />
@@ -163,14 +161,14 @@ const CardCarona: React.FC<CardCaronaProps> = ({ carona, onVerDetalhes }) => {
           </div>
         )}
 
-        {/* Cancelled banner */}
+        {}
         {carona.status === 'cancelada' && (
           <div className="flex items-center gap-2 bg-red-50 border border-red-200 rounded-xl px-3 py-2.5">
             <span className="text-red-500 text-[12px] font-semibold">⚠ Esta carona foi cancelada</span>
           </div>
         )}
 
-        {/* Price + CTA */}
+        {}
         <div className="flex items-center justify-between pt-3 border-t border-neutral-100 mt-auto">
           <div>
             <span className="text-[11px] text-slate-400 font-medium block">Por pessoa</span>

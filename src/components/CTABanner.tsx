@@ -8,12 +8,12 @@ export const CTABanner: React.FC = () => {
       <div className="max-w-[1200px] mx-auto">
         <div className="relative overflow-hidden rounded-[40px] bg-[#0A44B1] px-8 md:px-16 py-16 md:py-20 flex flex-col md:flex-row items-center justify-between gap-10">
           
-          {/* Decorative circles */}
+          {}
           <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full bg-white/4 -translate-y-1/2 translate-x-1/3 pointer-events-none" aria-hidden="true" />
           <div className="absolute bottom-0 left-0 w-[320px] h-[320px] rounded-full bg-[#E8EE3B]/8 translate-y-1/2 -translate-x-1/4 pointer-events-none" aria-hidden="true" />
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-white/3 rounded-full blur-[80px] pointer-events-none" aria-hidden="true" />
 
-          {/* Dot grid pattern */}
+          {}
           <div
             className="absolute inset-0 opacity-[0.04] pointer-events-none"
             style={{
@@ -23,7 +23,7 @@ export const CTABanner: React.FC = () => {
             aria-hidden="true"
           />
 
-          {/* Text side */}
+          {}
           <div className="relative text-center md:text-left max-w-[540px]">
             <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 text-white/80 text-[12px] font-semibold px-4 py-1.5 rounded-full uppercase tracking-widest mb-6">
               <FiStar className="text-[#E8EE3B]" aria-hidden="true" />
@@ -39,7 +39,7 @@ export const CTABanner: React.FC = () => {
             </p>
           </div>
 
-          {/* CTA side */}
+          {}
           <div className="relative flex flex-col items-center gap-4 flex-shrink-0">
             <Link
               to="/cadastro"

@@ -60,7 +60,7 @@ export const Testimonials: React.FC = () => {
   return (
     <section className="w-full px-4 py-20" id="depoimentos">
       <div className="max-w-[1200px] mx-auto">
-        {/* Header */}
+        {}
         <div className="text-center mb-14">
           <span className="inline-flex items-center gap-2 bg-[#E8EE3B]/25 border border-[#E8EE3B]/60 text-[#6b5e00] text-[12px] font-bold px-4 py-1.5 rounded-full uppercase tracking-widest mb-5">
             Depoimentos
@@ -74,7 +74,7 @@ export const Testimonials: React.FC = () => {
           </p>
         </div>
 
-        {/* Cards grid */}
+        {}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {testimonials.map((t, i) => (
             <article
@@ -84,7 +84,7 @@ export const Testimonials: React.FC = () => {
                 animationDelay: `${i * 120}ms`,
               }}
             >
-              {/* Quote mark */}
+              {}
               <div className="w-10 h-10 rounded-2xl bg-[#0A44B1]/6 flex items-center justify-center group-hover:bg-[#0A44B1]/12 transition-colors duration-300">
                 <svg className="w-5 h-5 text-[#0A44B1]/60" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
@@ -97,7 +97,7 @@ export const Testimonials: React.FC = () => {
                 "{t.text}"
               </p>
 
-              {/* Author */}
+              {}
               <div className="flex items-center gap-3 pt-2 border-t border-neutral-100">
                 <div
                   className="w-11 h-11 rounded-full flex items-center justify-center text-white text-[14px] font-bold flex-shrink-0"

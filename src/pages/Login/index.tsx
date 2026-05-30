@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { authApi } from '../../services/authApi';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
 import { FiMail, FiLock, FiEye, FiEyeOff, FiArrowLeft, FiMapPin, FiUsers, FiShield } from 'react-icons/fi';
 
 const highlights = [
@@ -14,6 +14,8 @@ const Login: React.FC = () => {
   const [senha, setSenha] = useState('');
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const { login } = useAuth();
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState('');
   const [focusedField, setFocusedField] = useState<string | null>(null);
@@ -25,14 +27,9 @@ const Login: React.FC = () => {
     if (!email.includes('@')) { setErro('Por favor, insira um e-mail válido.'); return; }
     setLoading(true);
     try {
-      const response = await authApi.login({ email, senha });
-      localStorage.setItem('token', response.token);
-      localStorage.setItem('userEmail', email);
-      if (response.usuario) {
-        localStorage.setItem('user', JSON.stringify(response.usuario));
-      }
-      alert('Login realizado com sucesso!');
-      window.location.href = '/caronas';
+      await login(email, senha);
+      const from = (location.state as any)?.from?.pathname || '/caronas';
+      navigate(from, { replace: true });
     } catch (error: any) {
       setErro(error.message || 'Erro ao fazer login. Tente novamente.');
     } finally {
@@ -48,7 +45,7 @@ const Login: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#FAFAF7] flex">
-      {/* Left branding panel */}
+      {}
       <div className="hidden lg:flex lg:w-[48%] bg-[#0A44B1] flex-col justify-between p-12 relative overflow-hidden">
         <div className="absolute top-[-100px] right-[-80px] w-[380px] h-[380px] rounded-full bg-white/5 pointer-events-none" />
         <div className="absolute bottom-[-60px] left-[-60px] w-[280px] h-[280px] rounded-full bg-[#E8EE3B]/10 pointer-events-none" />
@@ -87,7 +84,7 @@ const Login: React.FC = () => {
         <p className="text-white/30 text-[13px]">© {new Date().getFullYear()} UniCarona</p>
       </div>
 
-      {/* Right form panel */}
+      {}
       <div className="flex-1 flex flex-col items-center justify-center px-6 py-12 relative">
         <Link to="/" className="absolute top-6 left-6 inline-flex items-center gap-2 text-slate-500 hover:text-[#0A44B1] text-[14px] font-medium transition-colors no-underline group" id="login-back-button">
           <span className="w-8 h-8 rounded-full bg-white border border-neutral-200 flex items-center justify-center group-hover:border-[#0A44B1]/30 transition-colors shadow-sm">

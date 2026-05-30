@@ -1,4 +1,3 @@
-// styles.ts - Estilos em CSS-in-JS
 export const styles = {
   wrapper: {
     minHeight: '100vh',

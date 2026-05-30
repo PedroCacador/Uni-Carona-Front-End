@@ -1,10 +1,9 @@
-// API service para autenticação e registro
 
 const API_BASE_URL = 'http://localhost:3333';
 
 export interface LoginData {
   email: string;
-  senha?: string; // opcional para a tipagem, mas required na API
+  senha?: string;
 }
 
 export interface RegisterData {
@@ -78,6 +77,24 @@ class AuthApi {
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
       throw new Error(errorData.message || 'Erro ao atualizar dados');
+    }
+
+    return response.json();
+  }
+
+  async deleteAccount(id: string): Promise<{ message: string }> {
+    const token = localStorage.getItem('token');
+    const response = await fetch(`${this.baseUrl}/usuarios/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || 'Erro ao excluir conta');
     }
 
     return response.json();
